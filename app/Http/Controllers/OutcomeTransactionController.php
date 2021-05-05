@@ -2,29 +2,27 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\OutcomeTransactions;
+use App\Models\OutcomeTransaction;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
-class OutcomeTransactionsController extends Controller
+class OutcomeTransactionController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
-    }
+        if(!$request->id){
+            $outcome_transactions = OutcomeTransaction::all();
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+        }else{
+            $outcome_transactions = OutcomeTransaction::findOrFail($request->id);
+        }
+
+        return response()->json($outcome_transactions);
     }
 
     /**
@@ -35,7 +33,22 @@ class OutcomeTransactionsController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $input = OutcomeTransaction::insert([
+            'type' => $request->type,
+            'name' => $request->name,
+            'funding_id' => $request->funding_id ?? null,
+            'fixed_cost_id' => $request->fixed_cost_id ?? null,
+            'payment_method' => $request->payment_method,
+            'nominal' => $request->nominal,
+            'status' => $request->status ?? 'pending',
+            'created_at' => Carbon::now(),
+            'updated_at' => Carbon::now()
+        ]);
+        if($input){
+            return response('success');
+
+        }
+        return response('failed', 400);
     }
 
     /**

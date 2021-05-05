@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Funding;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class FundingController extends Controller
@@ -12,20 +13,21 @@ class FundingController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        if(!$request->id){
+            $fundings = Funding::all();
+
+        }else{
+            $fundings = Funding::find($request->id);
+            if(!$fundings){
+                return response('Data Not Found', 400);
+            }
+        }
+
+        return response()->json($fundings);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
 
     /**
      * Store a newly created resource in storage.
@@ -35,30 +37,23 @@ class FundingController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $input = Funding::insert([
+            'divisi_id' => $request->divisi_id,
+            'title' => $request->title,
+            'description' => $request->description,
+            'nominal' => $request->nominal,
+            'status' => 'sent',
+            'attachment' => $request->attachment,
+            'created_at' => Carbon::now(),
+            'updated_at' => Carbon::now()
+        ]);
+        if($input){
+            return response('success');
+
+        }
+        return response('failed', 400);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Funding  $funding
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Funding $funding)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Funding  $funding
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Funding $funding)
-    {
-        //
-    }
 
     /**
      * Update the specified resource in storage.
@@ -67,9 +62,29 @@ class FundingController extends Controller
      * @param  \App\Models\Funding  $funding
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Funding $funding)
+    public function update(Request $request, $id)
     {
-        //
+        $funding = Funding::find($id);
+        if($funding){
+            $update = $funding->update([
+                'divisi_id' => $request->divisi_id ?? $funding->divisi_id,
+                'title' => $request->title ?? $funding->title,
+                'description' => $request->description ?? $funding->description,
+                'nominal' => $request->nominal ?? $funding->nominal,
+                'status' => $request->status ?? $funding->status,
+                'attachment' => $request->attachment ?? $funding->attachment,
+                'updated_at' => Carbon::now()
+            ]);
+            
+            if($update){
+                return response('Update Success');
+            }
+
+            return response('Update Failed', 400);
+
+        }
+
+        return response('Data Not Found', 400);
     }
 
     /**
@@ -78,8 +93,20 @@ class FundingController extends Controller
      * @param  \App\Models\Funding  $funding
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Funding $funding)
+    public function destroy($id)
     {
-        //
+        $funding = Funding::find($id);
+        if($funding){
+            $delete = $funding->delete();
+            
+            if($delete){
+                return response('Delete Success');
+            }
+
+            return response('Delete Failed', 400);
+
+        }
+
+        return response('Data Not Found', 400);
     }
 }

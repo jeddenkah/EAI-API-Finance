@@ -23,3 +23,24 @@ $router->group(['prefix'=>'income_transaction'], function() use ($router){
     $router->patch('/{id}/update', 'IncomeTransactionController@update');
     $router->delete('/{id}/delete', 'IncomeTransactionController@destroy');
 });
+
+$router->group(['prefix'=>'funding'], function() use ($router){
+    $router->get('/', 'FundingController@index');
+    $router->post('/store', 'FundingController@store');
+    $router->patch('/{id}/update', 'FundingController@update');
+    $router->delete('/{id}/delete', 'FundingController@destroy');
+});
+$router->group(['prefix'=>'fixed_cost'], function() use ($router){
+    $router->get('/', 'FundingController@index');
+    $router->post('/store', 'FundingController@store');
+    $router->patch('/{id}/update', 'FundingController@update');
+    $router->delete('/{id}/delete', 'FundingController@destroy');
+});
+
+$router->group(['prefix'=>'outcome_transaction'], function() use ($router){
+    $router->get('/', 'OutcomeTransactionController@index');
+    $router->post('/store', 'OutcomeTransactionController@store');
+    $router->patch('/{id}/update', 'OutcomeTransactionController@update');
+    $router->delete('/{id}/delete', 'OutcomeTransactionController@destroy');
+});
+

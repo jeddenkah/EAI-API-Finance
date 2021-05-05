@@ -19,7 +19,10 @@ class IncomeTransactionController extends Controller
             $income_transactions = IncomeTransaction::all();
 
         }else{
-            $income_transactions = IncomeTransaction::findOrFail($request->id);
+            $income_transactions = IncomeTransaction::find($request->id);
+            if(!$income_transactions){
+                return response('Data Not Found', 400);
+            }
         }
 
         return response()->json($income_transactions);
