@@ -16,3 +16,10 @@
 $router->get('/', function () use ($router) {
     return $router->app->version();
 });
+
+$router->group(['prefix'=>'income_transaction'], function() use ($router){
+    $router->get('/', 'IncomeTransactionController@index');
+    $router->post('/store', 'IncomeTransactionController@store');
+    $router->patch('/{id}/update', 'IncomeTransactionController@update');
+    $router->delete('/{id}/delete', 'IncomeTransactionController@destroy');
+});
