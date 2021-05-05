@@ -17,7 +17,7 @@ class CreateFixedCostsTable extends Migration
             $table->id();
             $table->foreignId('divisi_id');
             $table->string('name');
-            $table->text('description');
+            $table->text('description')->nullable();
             $table->string('status', 50)->comment('active/inactive');
             $table->unsignedDouble('nominal');
             $table->string('every', 50)->comment('daily/weekly/monthly/annual');

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\FixedCost;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class FixedCostController extends Controller
@@ -12,19 +13,19 @@ class FixedCostController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
-    }
+        if(!$request->id){
+            $fixed_cost = FixedCost::all();
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+        }else{
+            $fixed_cost = FixedCost::find($request->id);
+            if(!$fixed_cost){
+                return response('Data Not Found', 400);
+            }
+        }
+
+        return response()->json($fixed_cost);
     }
 
     /**
@@ -35,29 +36,22 @@ class FixedCostController extends Controller
      */
     public function store(Request $request)
     {
-        //
-    }
+        $input = FixedCost::insert([
+            'divisi_id' => $request->divisi_id,
+            'name' => $request->name,
+            'description' => $request->description,
+            'status' => $request->status ?? 'active',
+            'nominal' => $request->nominal,
+            'every' => $request->every,
+            'date' => Carbon::parse($request->date),
+            'created_at' => Carbon::now(),
+            'updated_at' => Carbon::now()
+        ]);
+        if($input){
+            return response('success');
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\FixedCost  $fixedCost
-     * @return \Illuminate\Http\Response
-     */
-    public function show(FixedCost $fixedCost)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\FixedCost  $fixedCost
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(FixedCost $fixedCost)
-    {
-        //
+        }
+        return response('failed', 400);
     }
 
     /**
@@ -67,9 +61,30 @@ class FixedCostController extends Controller
      * @param  \App\Models\FixedCost  $fixedCost
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, FixedCost $fixedCost)
+    public function update(Request $request, $id)
     {
-        //
+        $fixed_cost = FixedCost::find($id);
+        if($fixed_cost){
+            $update = $fixed_cost->update([
+                'divisi_id' => $request->divisi_id ?? $fixed_cost->divisi_id,
+                'name' => $request->name ?? $fixed_cost->name,
+                'description' => $request->description ?? $fixed_cost->description,
+                'status' => $request->status ?? $fixed_cost->status,
+                'nominal' => $request->nominal ?? $fixed_cost->nominal,
+                'every' => $request->every ?? $fixed_cost->every,
+                'date' => Carbon::parse($request->date ?? $fixed_cost->date),
+                'updated_at' => Carbon::now()
+            ]);
+            
+            if($update){
+                return response('Update Success');
+            }
+
+            return response('Update Failed', 400);
+
+        }
+
+        return response('Data Not Found', 400);
     }
 
     /**
@@ -78,8 +93,20 @@ class FixedCostController extends Controller
      * @param  \App\Models\FixedCost  $fixedCost
      * @return \Illuminate\Http\Response
      */
-    public function destroy(FixedCost $fixedCost)
+    public function destroy($id)
     {
-        //
+        $fixed_cost = FixedCost::find($id);
+        if($fixed_cost){
+            $delete = $fixed_cost->delete();
+            
+            if($delete){
+                return response('Delete Success');
+            }
+
+            return response('Delete Failed', 400);
+
+        }
+
+        return response('Data Not Found', 400);
     }
 }

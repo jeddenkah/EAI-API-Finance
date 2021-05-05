@@ -30,11 +30,12 @@ $router->group(['prefix'=>'funding'], function() use ($router){
     $router->patch('/{id}/update', 'FundingController@update');
     $router->delete('/{id}/delete', 'FundingController@destroy');
 });
+
 $router->group(['prefix'=>'fixed_cost'], function() use ($router){
-    $router->get('/', 'FundingController@index');
-    $router->post('/store', 'FundingController@store');
-    $router->patch('/{id}/update', 'FundingController@update');
-    $router->delete('/{id}/delete', 'FundingController@destroy');
+    $router->get('/', 'FixedCostController@index');
+    $router->post('/store', 'FixedCostController@store');
+    $router->patch('/{id}/update', 'FixedCostController@update');
+    $router->delete('/{id}/delete', 'FixedCostController@destroy');
 });
 
 $router->group(['prefix'=>'outcome_transaction'], function() use ($router){
