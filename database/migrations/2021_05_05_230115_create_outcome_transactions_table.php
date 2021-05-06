@@ -17,8 +17,8 @@ class CreateOutcomeTransactionsTable extends Migration
             $table->id();
             $table->string('type', 70)->comment('funding/fixed_cost');
             $table->string('name');
-            $table->foreignId('funding_id')->nullable()->foreign('funding_id')->references('id')->on('fundings');
-            $table->foreignId('fixed_cost_id')->nullable()->foreign('fixed_cost_id')->references('id')->on('fixed_costs');
+            $table->foreignId('funding_id')->nullable()->foreign('funding_id')->references('id')->on('fundings')->onDelete('cascade');
+            $table->foreignId('fixed_cost_id')->nullable()->foreign('fixed_cost_id')->references('id')->on('fixed_costs')->onDelete('cascade');
             $table->string('payment_method');
             $table->unsignedDouble('nominal');
             $table->string('status', 50)->comment('success/pending/failed');
