@@ -16,32 +16,34 @@
 $router->get('/', function () use ($router) {
     return $router->app->version();
 });
+$router->post('/register', 'UserController@register');
+$router->get('/users', 'UserController@index');
+$router->group(['prefix' => 'api', 'middleware' => 'auth'], function () use ($router) {
+    $router->group(['prefix' => 'income_transaction'], function () use ($router) {
+        $router->get('/', 'IncomeTransactionController@index');
+        $router->post('/store', 'IncomeTransactionController@store');
+        $router->patch('/{id}/update', 'IncomeTransactionController@update');
+        $router->delete('/{id}/delete', 'IncomeTransactionController@destroy');
+    });
 
-$router->group(['prefix'=>'income_transaction'], function() use ($router){
-    $router->get('/', 'IncomeTransactionController@index');
-    $router->post('/store', 'IncomeTransactionController@store');
-    $router->patch('/{id}/update', 'IncomeTransactionController@update');
-    $router->delete('/{id}/delete', 'IncomeTransactionController@destroy');
+    $router->group(['prefix' => 'funding'], function () use ($router) {
+        $router->get('/', 'FundingController@index');
+        $router->post('/store', 'FundingController@store');
+        $router->patch('/{id}/update', 'FundingController@update');
+        $router->delete('/{id}/delete', 'FundingController@destroy');
+    });
+
+    $router->group(['prefix' => 'fixed_cost'], function () use ($router) {
+        $router->get('/', 'FixedCostController@index');
+        $router->post('/store', 'FixedCostController@store');
+        $router->patch('/{id}/update', 'FixedCostController@update');
+        $router->delete('/{id}/delete', 'FixedCostController@destroy');
+    });
+
+    $router->group(['prefix' => 'outcome_transaction'], function () use ($router) {
+        $router->get('/', 'OutcomeTransactionController@index');
+        $router->post('/store', 'OutcomeTransactionController@store');
+        $router->patch('/{id}/update', 'OutcomeTransactionController@update');
+        $router->delete('/{id}/delete', 'OutcomeTransactionController@destroy');
+    });
 });
-
-$router->group(['prefix'=>'funding'], function() use ($router){
-    $router->get('/', 'FundingController@index');
-    $router->post('/store', 'FundingController@store');
-    $router->patch('/{id}/update', 'FundingController@update');
-    $router->delete('/{id}/delete', 'FundingController@destroy');
-});
-
-$router->group(['prefix'=>'fixed_cost'], function() use ($router){
-    $router->get('/', 'FixedCostController@index');
-    $router->post('/store', 'FixedCostController@store');
-    $router->patch('/{id}/update', 'FixedCostController@update');
-    $router->delete('/{id}/delete', 'FixedCostController@destroy');
-});
-
-$router->group(['prefix'=>'outcome_transaction'], function() use ($router){
-    $router->get('/', 'OutcomeTransactionController@index');
-    $router->post('/store', 'OutcomeTransactionController@store');
-    $router->patch('/{id}/update', 'OutcomeTransactionController@update');
-    $router->delete('/{id}/delete', 'OutcomeTransactionController@destroy');
-});
-
