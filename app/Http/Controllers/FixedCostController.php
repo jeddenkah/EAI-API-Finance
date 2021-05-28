@@ -15,17 +15,19 @@ class FixedCostController extends Controller
      */
     public function index(Request $request)
     {
-        if(!$request->id){
-            $fixed_cost = FixedCost::all();
+        $fixed_cost = FixedCost::all();
+        if($request->id){
 
-        }else{
-            $fixed_cost = FixedCost::find($request->id);
-            if(!$fixed_cost){
-                return response('Data Not Found', 400);
-            }
+            $fixed_cost = $fixed_cost->where('id', $request->id);
+           
+        }
+        if($request->divisi_id){
+
+            $fixed_cost = $fixed_cost->where('divisi_id', $request->divisi_id);
+          
         }
 
-        return response()->json($fixed_cost);
+        return response()->json($fixed_cost->values());
     }
 
     /**
