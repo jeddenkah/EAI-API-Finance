@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Funding;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class FundingController extends Controller
 {
@@ -37,13 +38,17 @@ class FundingController extends Controller
      */
     public function store(Request $request)
     {
+        $fileName = date("Y-m-d-His") . '_' . $request->file('attachment')->getClientOriginalName();
+
+        $attachment = $request->file('attachment')
+             ->storeAs('fundings', $fileName, ['disk'=>'public']);
         $input = Funding::insert([
             'divisi_id' => $request->divisi_id,
             'title' => $request->title,
             'description' => $request->description,
             'nominal' => $request->nominal,
             'status' => 'sent',
-            'attachment' => $request->attachment,
+            'attachment' => env('APP_URL').'/storage/fundings/'.$fileName,
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now()
         ]);
@@ -64,7 +69,24 @@ class FundingController extends Controller
      */
     public function update(Request $request, $id)
     {
+        
         $funding = Funding::find($id);
+         // if image changed
+         if ($request->hasFile('attachment')) {
+            $existingFile = basename($funding->attachment);
+            Storage::delete('public/fundings/' . $existingFile);
+
+
+            $fileName = date("Y-m-d-His") . '_' . $request->file('attachment')->getClientOriginalName();
+            $File = $request->file('attachment')
+                ->storeAs('fundings', $fileName, ['disk'=>'public']);
+
+
+            $funding->update([
+                'attachment' => env('APP_URL').'/storage/fundings/'.$fileName,
+            ]);
+        }
+
         if($funding){
             $update = $funding->update([
                 'divisi_id' => $request->divisi_id ?? $funding->divisi_id,
@@ -72,7 +94,6 @@ class FundingController extends Controller
                 'description' => $request->description ?? $funding->description,
                 'nominal' => $request->nominal ?? $funding->nominal,
                 'status' => $request->status ?? $funding->status,
-                'attachment' => $request->attachment ?? $funding->attachment,
                 'updated_at' => Carbon::now()
             ]);
             
@@ -97,6 +118,8 @@ class FundingController extends Controller
     {
         $funding = Funding::find($id);
         if($funding){
+            $existingFile = basename($funding->attachment);
+            Storage::delete('public/fundings/' . $existingFile);
             $delete = $funding->delete();
             
             if($delete){
