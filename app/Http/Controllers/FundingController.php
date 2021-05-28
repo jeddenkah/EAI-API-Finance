@@ -16,17 +16,19 @@ class FundingController extends Controller
      */
     public function index(Request $request)
     {
-        if(!$request->id){
-            $fundings = Funding::all();
-
-        }else{
-            $fundings = Funding::find($request->id);
-            if(!$fundings){
-                return response('Data Not Found', 400);
-            }
+        $fundings = Funding::all();
+        if($request->id){
+            $fundings = $fundings->where('id', $request->id);
         }
+        if($request->status){
+            $fundings = $fundings->where('status', $request->status);
+        }
+        if($request->divisi_id){
+            $fundings = $fundings->where('divisi_id', $request->divisi_id);
+        }
+        
 
-        return response()->json($fundings);
+        return response()->json($fundings->values());
     }
 
 
